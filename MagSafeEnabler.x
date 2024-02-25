@@ -13,6 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with MagSafe Enabler. If not, see <https://www.gnu.org/licenses/>.
  */
+#import <UIKit/UIKit.h>
 
 @interface SBFTouchPassThroughView : UIView
 @end
@@ -27,27 +28,6 @@
 @property (nonatomic) bool isConnectedToWirelessInternalCharger;
 @end
 
-%group iOS14_1_to_14_5_1
-
-%hook CSPowerChangeObserver
-- (bool)isConnectedToWirelessInternalChargingAccessory {
-	return YES;
-}
-- (void)setIsConnectedToWirelessInternalChargingAccessory:(bool)arg1 {
-	%orig(YES);
-}
-- (bool)isConnectedToWirelessInternalCharger {
-	return YES;
-}
-- (void)setIsConnectedToWirelessInternalCharger:(bool)arg1 {
-	%orig(YES);
-}
-%end
-
-%end
-
-%group iOS14_6_up
-
 %hook CSPowerChangeObserver
 - (void)update {
 	%orig;
@@ -55,7 +35,6 @@
 }
 %end
 
-%end
 
 %hook CSLockScreenChargingSettings
 - (long long)wirelessChargingAnimationType {
@@ -150,12 +129,3 @@
 	%orig;
 }
 %end
-
-%ctor {
-	%init;
-	if ( @available(iOS 14.6, *) ) {
-		%init(iOS14_6_up);
-	} else {
-		%init(iOS14_1_to_14_5_1);
-	}
-}
